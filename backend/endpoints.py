@@ -66,21 +66,24 @@ async def chat(req: ChatRequest, x_groq_key: str = Header(...)):
     messages = [{"role": "system", "content": system_content}]
     messages += [{"role": m.role, "content": m.content} for m in req.messages]
 
-    def stream():
+    def generate():
         try:
-            with client.chat.completions.stream(
+            completion = client.chat.completions.create(
                 model=GENERATION_MODEL,
                 messages=messages,
                 temperature=0.5,
                 max_tokens=1024,
-            ) as stream:
-                for text in stream.text_stream:
+                stream=True,
+            )
+            for chunk in completion:
+                text = chunk.choices[0].delta.content or ""
+                if text:
                     yield f"data: {json.dumps({'token': text})}\n\n"
             yield "data: [DONE]\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 
 @router.post("/detail")
@@ -90,9 +93,9 @@ async def detail(req: DetailRequest, x_groq_key: str = Header(...)):
 
     system_content = f"{prompt}\n\nTranscript context:\n{req.transcript}"
 
-    def stream():
+    def generate():
         try:
-            with client.chat.completions.stream(
+            completion = client.chat.completions.create(
                 model=GENERATION_MODEL,
                 messages=[
                     {"role": "system", "content": system_content},
@@ -100,11 +103,14 @@ async def detail(req: DetailRequest, x_groq_key: str = Header(...)):
                 ],
                 temperature=0.5,
                 max_tokens=1024,
-            ) as stream:
-                for text in stream.text_stream:
+                stream=True,
+            )
+            for chunk in completion:
+                text = chunk.choices[0].delta.content or ""
+                if text:
                     yield f"data: {json.dumps({'token': text})}\n\n"
             yield "data: [DONE]\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    return StreamingResponse(generate(), media_type="text/event-stream")
