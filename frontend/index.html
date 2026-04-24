@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TwinMind</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <span class="app-title">TwinMind</span>
+    <div class="header-actions">
+      <button id="export-btn" class="btn-secondary">Export Session</button>
+      <button id="settings-btn" class="btn-secondary">Settings</button>
+    </div>
+  </header>
+
+  <main class="columns">
+
+    <!-- Column 1: Transcript -->
+    <section class="column" id="col-transcript">
+      <div class="col-header">
+        <span class="col-label">1. MIC &amp; TRANSCRIPT</span>
+        <span class="col-badge" id="rec-status">IDLE</span>
+      </div>
+      <div class="mic-row">
+        <button id="mic-btn" class="mic-btn" title="Start recording">
+          <span class="mic-icon">&#9679;</span>
+        </button>
+        <span id="mic-label">Click to start recording</span>
+      </div>
+      <div class="transcript-body" id="transcript-body"></div>
+    </section>
+
+    <!-- Column 2: Suggestions -->
+    <section class="column" id="col-suggestions">
+      <div class="col-header">
+        <span class="col-label">2. LIVE SUGGESTIONS</span>
+        <span class="col-badge" id="batch-count">0 BATCHES</span>
+      </div>
+      <div class="suggestions-toolbar">
+        <button id="refresh-btn" class="btn-secondary">↺ Reload suggestions</button>
+        <span class="auto-label" id="auto-label">auto-refresh in 30s</span>
+      </div>
+      <div class="suggestions-body" id="suggestions-body"></div>
+    </section>
+
+    <!-- Column 3: Chat -->
+    <section class="column" id="col-chat">
+      <div class="col-header">
+        <span class="col-label">3. CHAT (DETAILED ANSWERS)</span>
+        <span class="col-badge">SESSION-ONLY</span>
+      </div>
+      <div class="chat-body" id="chat-body"></div>
+      <div class="chat-input-row">
+        <input
+          type="text"
+          id="chat-input"
+          class="chat-input"
+          placeholder="Ask anything..."
+          autocomplete="off"
+        />
+        <button id="send-btn" class="btn-primary">Send</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <span>Settings</span>
+        <button id="settings-close" class="btn-icon">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>Groq API Key
+          <input type="password" id="groq-key-input" placeholder="gsk_..." />
+        </label>
+        <label>Suggestion Context (chunks)
+          <input type="number" id="suggestion-chunks" min="1" max="20" value="5" />
+        </label>
+        <label>Detail Context (chunks)
+          <input type="number" id="detail-chunks" min="1" max="40" value="20" />
+        </label>
+        <label>Suggestion Prompt
+          <textarea id="suggestion-prompt" rows="6"></textarea>
+        </label>
+        <label>Detail Prompt
+          <textarea id="detail-prompt" rows="4"></textarea>
+        </label>
+        <label>Chat Prompt
+          <textarea id="chat-prompt" rows="4"></textarea>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button id="settings-save" class="btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="export.js"></script>
+  <script src="api.js"></script>
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
