@@ -9,11 +9,11 @@
   --text: #e2e8f0;
   --text-muted: #6b7280;
   --text-dim: #9ca3af;
-  --accent: #3b82f6;
+  --accent: #6366f1;
 
   --badge-answer: #059669;
   --badge-factcheck: #d97706;
-  --badge-question: #3b82f6;
+  --badge-question: #6366f1;
   --badge-talking: #7c3aed;
 }
 
@@ -205,7 +205,7 @@ main.columns {
   color: var(--text);
   white-space: pre-wrap;
 }
-.chat-message.user .chat-content { border-color: #2a3a5e; background: #17203a; }
+.chat-message.user .chat-content { border-color: #2e2a5e; background: #171730; }
 
 .typing-indicator { color: var(--text-muted); font-size: 13px; padding: 4px 0; }
 
