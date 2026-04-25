@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://twinmind-backend-12349696088.us-central1.run.app";
 
 function getKey() {
   return localStorage.getItem("groq_key") || "";
