@@ -6,13 +6,11 @@ A 3-column web app that listens to a live conversation and surfaces AI-powered s
 
 ## Setup
 
-**Live app:** `<FRONTEND_URL>`
+**Live app:** `https://twinmind-atharva.vercel.app/`
 
 1. Open the link above
-2. Click **Settings** and paste your [Groq API key](https://console.groq.com)
+2. Click **Settings** and paste your [Groq API key]
 3. Click the mic to start recording
-
-The API key is stored in `localStorage` and sent per-request, never stored server-side.
 
 ---
 
@@ -21,14 +19,12 @@ The API key is stored in `localStorage` and sent per-request, never stored serve
 **Backend:** FastAPI + Groq Python SDK
 - FastAPI for lightweight async HTTP and SSE streaming
 - Groq for both transcription (Whisper Large V3) and generation (openai/gpt-oss-120b)
-- Fully stateless, no database, no session storage
 
 **Frontend:** Vanilla JS + HTML + CSS, no framework, no build step
 - Single page, all session state in JS variables
-- `marked.js` for markdown rendering in chat
 
 **Models:**
-- `whisper-large-v3` - transcription, `language="en"` set explicitly to prevent mid-session language drift
+- `whisper-large-v3` - transcription
 - `openai/gpt-oss-120b` - suggestions, chat, and detail expansion
 
 ---
@@ -81,6 +77,5 @@ The 4 suggestion types are not always shown equally. 3 are chosen based on what 
 
 ## Deployment
 
-- Backend: Google Cloud Run (see `backend/Dockerfile`)
-- Frontend: Vercel (point at `frontend/` directory)
-- Update `API_BASE` in `frontend/api.js` to the Cloud Run URL before deploying frontend
+- Backend: Google Cloud Run 
+- Frontend: Vercel
