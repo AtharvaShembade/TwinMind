@@ -109,7 +109,6 @@ function addSuggestionBatch(suggestions) {
   }
 
   suggestionsBody.prepend(batchEl);
-  resetCountdown();
 }
 
 // --- Suggestion click → detail stream ---
@@ -160,9 +159,13 @@ function addChatMessage(role, content, sourceSuggestion = null) {
   const el = document.createElement("div");
   el.className = `chat-message ${role}`;
   el.dataset.msgId = msg.id;
+  el.dataset.buffer = "";
+  const bodyContent = role === "assistant" && !content
+    ? `<span class="typing-indicator">...</span>`
+    : escapeHtml(content);
   el.innerHTML = `
     <span class="chat-role">${role === "user" ? "YOU" : "ASSISTANT"}</span>
-    <div class="chat-content">${escapeHtml(content)}</div>
+    <div class="chat-content">${bodyContent}</div>
   `;
   chatBody.appendChild(el);
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -170,15 +173,14 @@ function addChatMessage(role, content, sourceSuggestion = null) {
 }
 
 function appendToMessage(el, token) {
-  const content = el.querySelector(".chat-content");
-  content.textContent += token;
-  chatBody.scrollTop = chatBody.scrollHeight;
+  el.dataset.buffer += token;
 }
 
 function finalizeMessage(el) {
   const content = el.querySelector(".chat-content");
-  const rawText = content.textContent;
+  const rawText = el.dataset.buffer || content.textContent;
   content.innerHTML = marked.parse(rawText);
+  chatBody.scrollTop = chatBody.scrollHeight;
   const msg = state.chatMessages.find((m) => m.id === el.dataset.msgId);
   if (msg) msg.content = rawText;
 }
@@ -198,9 +200,7 @@ micBtn.addEventListener("click", () => {
     startRecording(
       (text) => {
         addTranscriptChunk(text);
-        clearInterval(refreshTimer);
-        refreshTimer = setInterval(loadSuggestions, 30000);
-        refreshCountdown = 30;
+        resetAutoRefresh();
         loadSuggestions();
       },
       (err) => showToast(err)
@@ -215,20 +215,24 @@ micBtn.addEventListener("click", () => {
 // --- Auto refresh ---
 
 function startAutoRefresh() {
+  resetAutoRefresh();
+}
+
+function resetAutoRefresh() {
+  clearInterval(refreshTimer);
+  clearInterval(countdownTimer);
   refreshCountdown = 30;
   refreshTimer = setInterval(loadSuggestions, 30000);
   countdownTimer = setInterval(() => {
     refreshCountdown--;
     autoLabel.textContent = `auto-refresh in ${refreshCountdown}s`;
-    if (refreshCountdown <= 0) refreshCountdown = 30;
   }, 1000);
 }
 
-function resetCountdown() {
-  refreshCountdown = 30;
-}
-
-refreshBtn.addEventListener("click", loadSuggestions);
+refreshBtn.addEventListener("click", () => {
+  resetAutoRefresh();
+  loadSuggestions();
+});
 
 // --- Settings ---
 
