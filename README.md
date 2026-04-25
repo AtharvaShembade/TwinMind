@@ -1,4 +1,4 @@
-# TwinMind - Real-Time Meeting Assistant
+# TwinMind - Live Conversation Copilot
 
 A 3-column web app that listens to a live conversation and surfaces AI-powered suggestions in real time: answers, fact-checks, questions to ask, and talking points.
 
@@ -9,14 +9,14 @@ A 3-column web app that listens to a live conversation and surfaces AI-powered s
 **Live app:** `https://twinmind-atharva.vercel.app/`
 
 1. Open the link above
-2. Click **Settings** and paste your [Groq API key]
+2. Click **Settings** and paste your Groq API key
 3. Click the mic to start recording
 
 ---
 
 ## Stack
 
-**Backend:** FastAPI + Groq Python SDK
+**Backend:** FastAPI + Groq 
 - FastAPI for lightweight async HTTP and SSE streaming
 - Groq for both transcription (Whisper Large V3) and generation (openai/gpt-oss-120b)
 
