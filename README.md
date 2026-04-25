@@ -1,6 +1,6 @@
 # TwinMind - Live Conversation Copilot
 
-A 3-column web app that listens to a live conversation and surfaces AI-powered suggestions in real time: answers, fact-checks, questions to ask, and talking points.
+An app that listens to a live conversation and surfaces AI-powered suggestions in real time: answers, fact-checks, questions to ask and talking points.
 
 ---
 
@@ -43,17 +43,16 @@ Clicking a suggestion card opens a detailed expansion via `/detail` (SSE stream)
 
 ### Suggestions
 
-The core design decision: suggestions are chosen by trigger condition, not randomly or by fixed slots.
+All 4 types are evaluated on every refresh. The 3 most relevant to the current moment are returned, ordered by urgency. Duplicates are explicitly prohibited.
 
-Each of the 4 types has a concrete trigger:
-- **ANSWER** - a question was asked or a concept needs clarification
-- **FACT-CHECK** - a claim was made, or a topic came up with a relevant fact worth surfacing
-- **QUESTION TO ASK** - a key angle is missing or unexplored
-- **TALKING POINT** - a statement was made that the listener can build on, challenge, or add insight to
+- **ANSWER** - surfaces when a direct factual question needs an immediate answer
+- **FACT-CHECK** - surfaces when a specific claim or statistic is made and needs verification or context
+- **QUESTION TO ASK** - surfaces when a key angle in the conversation is missing or unexplored
+- **TALKING POINT** - surfaces when a position or decision is stated that the listener should respond to
 
-The model picks the 3 types whose triggers are most clearly met by the last 2-3 exchanges. This means suggestions adapt to the type of meeting: a technical Q&A surfaces more ANSWERs, a negotiation surfaces more TALKING POINTs. Duplicates are explicitly prohibited.
+This means suggestions adapt naturally to the conversation type; a technical Q&A surfaces more ANSWERS, a negotiation surfaces more TALKING POINTS.
 
-The prompt also instructs the model to focus only on the last 2-3 exchanges. The 5-chunk context window already handles recency, but the prompt reinforces it to prevent the model from fixating on earlier parts of the conversation.
+The prompt focuses the model on the last 2-3 exchanges only. The 5-chunk context window already handles recency, but the prompt reinforces it to prevent the model from fixating on earlier parts of the conversation.
 
 ### Detail
 
