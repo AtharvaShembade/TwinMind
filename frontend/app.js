@@ -111,7 +111,7 @@ function addSuggestionBatch(suggestions) {
   suggestionsBody.prepend(batchEl);
 }
 
-// --- Suggestion click → detail stream ---
+// --- Suggestion click ---
 
 function onSuggestionClick(suggestion) {
   if (isStreaming) return;
