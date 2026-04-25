@@ -203,9 +203,14 @@ main.columns {
   font-size: 13px;
   line-height: 1.6;
   color: var(--text);
-  white-space: pre-wrap;
 }
 .chat-message.user .chat-content { border-color: #2e2a5e; background: #171730; }
+.chat-content h1, .chat-content h2, .chat-content h3 { font-size: 14px; font-weight: 600; margin: 8px 0 4px; }
+.chat-content ul, .chat-content ol { padding-left: 18px; margin: 4px 0; }
+.chat-content li { margin: 2px 0; }
+.chat-content p { margin: 4px 0; }
+.chat-content strong { color: #fff; }
+.chat-content code { background: var(--bg); padding: 1px 4px; border-radius: 3px; font-size: 12px; }
 
 .typing-indicator { color: var(--text-muted); font-size: 13px; padding: 4px 0; }
 

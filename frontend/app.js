@@ -154,6 +154,7 @@ function addChatMessage(role, content, sourceSuggestion = null) {
 
   const el = document.createElement("div");
   el.className = `chat-message ${role}`;
+  el.dataset.msgId = msg.id;
   el.innerHTML = `
     <span class="chat-role">${role === "user" ? "YOU" : "ASSISTANT"}</span>
     <div class="chat-content">${escapeHtml(content)}</div>
@@ -171,8 +172,10 @@ function appendToMessage(el, token) {
 
 function finalizeMessage(el) {
   const content = el.querySelector(".chat-content");
+  const rawText = content.textContent;
+  content.innerHTML = marked.parse(rawText);
   const msg = state.chatMessages.find((m) => m.id === el.dataset.msgId);
-  if (msg) msg.content = content.textContent;
+  if (msg) msg.content = rawText;
 }
 
 // --- Mic ---
@@ -237,6 +240,7 @@ settingsModal.addEventListener("click", (e) => { if (e.target === settingsModal)
 settingsSave.addEventListener("click", () => {
   const key = $("groq-key-input").value.trim();
   if (key) localStorage.setItem("groq_key", key);
+  else localStorage.removeItem("groq_key");
   state.settings.suggestionChunks = parseInt($("suggestion-chunks").value) || 5;
   state.settings.detailChunks = parseInt($("detail-chunks").value) || 20;
   state.settings.suggestionPrompt = $("suggestion-prompt").value.trim() || state.settings.suggestionPrompt;
