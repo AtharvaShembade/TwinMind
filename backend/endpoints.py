@@ -21,7 +21,7 @@ def get_client(x_groq_key: str = Header(...)):
         raise HTTPException(status_code=401, detail="Missing Groq API key")
     return create_client(x_groq_key)
 
-
+# Audio to transcripts
 @router.post("/transcribe")
 async def transcribe(
     audio: UploadFile = File(...),
@@ -41,7 +41,7 @@ async def transcribe(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+# Generates 3 suggestion cards
 @router.post("/suggestions", response_model=SuggestionsResponse)
 async def suggestions(req: SuggestionsRequest, x_groq_key: str = Header(...)):
     client = get_client(x_groq_key)
@@ -76,7 +76,7 @@ async def suggestions(req: SuggestionsRequest, x_groq_key: str = Header(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+# Chat
 @router.post("/chat")
 async def chat(req: ChatRequest, x_groq_key: str = Header(...)):
     client = get_client(x_groq_key)
@@ -105,7 +105,7 @@ async def chat(req: ChatRequest, x_groq_key: str = Header(...)):
 
     return StreamingResponse(generate(), media_type="text/event-stream")
 
-
+# Detailed answer to suggestion
 @router.post("/detail")
 async def detail(req: DetailRequest, x_groq_key: str = Header(...)):
     client = get_client(x_groq_key)
