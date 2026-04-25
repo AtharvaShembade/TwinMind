@@ -56,10 +56,14 @@ function getRecentTranscript(n) {
 
 // --- Suggestions ---
 
+let isLoadingSuggestions = false;
+
 async function loadSuggestions() {
+  if (isLoadingSuggestions) return;
   if (!state.transcriptChunks.length) return;
   if (!localStorage.getItem("groq_key")) { showToast("Add your Groq API key in Settings."); return; }
 
+  isLoadingSuggestions = true;
   refreshBtn.disabled = true;
   try {
     const transcript = getRecentTranscript(state.settings.suggestionChunks);
@@ -68,6 +72,7 @@ async function loadSuggestions() {
   } catch (err) {
     showToast(err.message || "Failed to load suggestions.");
   } finally {
+    isLoadingSuggestions = false;
     refreshBtn.disabled = false;
   }
 }
@@ -193,6 +198,9 @@ micBtn.addEventListener("click", () => {
     startRecording(
       (text) => {
         addTranscriptChunk(text);
+        clearInterval(refreshTimer);
+        refreshTimer = setInterval(loadSuggestions, 30000);
+        refreshCountdown = 30;
         loadSuggestions();
       },
       (err) => showToast(err)
