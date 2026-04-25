@@ -1,4 +1,5 @@
 import json
+import re
 from fastapi import APIRouter, Header, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
 from lib.groq_client import create_client, TRANSCRIPTION_MODEL, GENERATION_MODEL
@@ -46,13 +47,23 @@ async def suggestions(req: SuggestionsRequest, x_groq_key: str = Header(...)):
                 {"role": "user", "content": f"Transcript:\n{req.transcript}"}
             ],
             temperature=0.7,
-            max_tokens=512,
+            max_tokens=1024,
         )
         raw = response.choices[0].message.content.strip()
-        parsed = json.loads(raw)
+        raw = re.sub(r'^```(?:json)?\s*', '', raw)
+        raw = re.sub(r'\s*```$', '', raw).strip()
+        raw = raw.replace('“', '"').replace('”', '"').replace('‘', "'").replace('’', "'")
+        match = re.search(r'\[.*\]', raw, re.DOTALL)
+        if match:
+            raw = match.group(0)
+        try:
+            parsed = json.loads(raw, strict=False)
+        except json.JSONDecodeError as e:
+            window = raw[max(0, e.pos - 30):e.pos + 30]
+            print(f"JSON error: {e.msg} at pos {e.pos} (line {e.lineno}, col {e.colno})")
+            print(f"Context: ...{window}...")
+            raise HTTPException(status_code=500, detail=f"JSON error: {e.msg} at pos {e.pos}. Context: {window}")
         return SuggestionsResponse(suggestions=[Suggestion(**s) for s in parsed])
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="Model returned invalid JSON")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
